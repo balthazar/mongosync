@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongosync
+type: Opaque
+stringData:
+  # Refer to https://www.mongodb.com/docs/cluster-to-cluster-sync/current/reference/configuration/#configuration for more options.
+  mongosync.yml: |
+    cluster0: "mongodb://mongosync-user:<strong-password>@mongos.mongodb.svc.cluster.local:27017"
+    cluster1: "mongodb://mongosync-user:<strong-password>@192.168.32.64:27017"
+    logPath: "/var/log/mongosync"
+    verbosity: "WARN"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -5,7 +17,6 @@ metadata:
   labels:
     app: mongosync
   name: mongosync
-  namespace: infra-mongosync
 spec:
   replicas: 1
   selector:
@@ -17,11 +28,11 @@ spec:
         app: mongosync
     spec:
       volumes:
-        - name: mongosync-secrets
+        - name: mongosync
           secret:
-            secretName: mongosync-secrets
+            secretName: mongosync
       containers:
-      - image: norbertgruszka1234/mongosync:v0.1.0
+      - image: balthazar0/mongosync
         name: mongosync
         command: ["--config", "/etc/mongosync.conf"]
         ports:
@@ -47,15 +58,15 @@ spec:
         - name: MONGOSYNC_CLUSTER_0
           valueFrom:
             secretKeyRef:
-              name: mongosync-secrets
+              name: mongosync
               key: MONGOSYNC_CLUSTER_0
         - name: MONGOSYNC_CLUSTER_1
           valueFrom:
             secretKeyRef:
-              name: mongosync-secrets
+              name: mongosync
               key: MONGOSYNC_CLUSTER_1
         volumeMounts:
-          - name: mongosync-secrets
+          - name: mongosync
             readOnly: true
             mountPath: "/etc/"
 ---
@@ -65,7 +76,6 @@ metadata:
   labels:
     app: mongosync
   name: mongosync
-  namespace: infra-mongosync
 spec:
   selector:
     app: mongosync

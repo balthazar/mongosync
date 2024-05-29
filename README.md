@@ -22,7 +22,7 @@ curl http://localhost:27182/api/v1/progress
 
 ### Migration
 
-Update the contents of the `payload.json` file and run
+Update the contents of the `payload.json` file following the [start API parameters spec](https://www.mongodb.com/docs/cluster-to-cluster-sync/current/reference/api/start/#request-body-parameters) and run
 
 ```bash
 curl localhost:27182/api/v1/start -XPOST --data @payload.json
@@ -30,8 +30,13 @@ curl localhost:27182/api/v1/start -XPOST --data @payload.json
 
 ### Permissions
 
-If you have doubts regarding roles required by `mongosync`, please refer to the [official documentation](https://www.mongodb.com/docs/cluster-to-cluster-sync/current/connecting/onprem-to-onprem/#roles).
-Depending on the type of sync you want to do, you will not need to create the following role and user for the source and destination dbs, this is just an example.
+Refer to the [official documentation](https://www.mongodb.com/docs/cluster-to-cluster-sync/current/connecting/onprem-to-onprem/#roles) in regards to which role is
+required for the kind of sync you want to perform.
+
+Note that unlike what the docs say, I could not start a sync unless the destination cluster user was given the `clusterAdmin` permission, when it should
+only require `clusterMonitor` and `clusterManager`.
+
+The following are mere templates of role and user creation for easy copy-paste if [user-write blocking](https://www.mongodb.com/docs/cluster-to-cluster-sync/current/reference/api/start/#user-write-blocking) is needed.
 
 ```js
 db.adminCommand({

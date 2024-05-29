@@ -7,7 +7,6 @@ stringData:
   config.yml: |
     cluster0: "mongodb://admin:password@cluster.namespace.svc"
     cluster1: "mongodb://admin:password@new-cluster.namespace.svc"
-    logPath: "/var/log/mongosync"
     verbosity: "WARN"
 ---
 apiVersion: apps/v1
@@ -37,22 +36,22 @@ spec:
         ports:
         - containerPort: 27182
           name: api
-        livenessProbe:
-          httpGet:
-            path: /api/v1/progress
-            port: api
-          periodSeconds: 10
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /api/v1/progress
-            port: api
-          periodSeconds: 10
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 3
+        # livenessProbe:
+        #   httpGet:
+        #     path: /api/v1/progress
+        #     port: api
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        # readinessProbe:
+        #   httpGet:
+        #     path: /api/v1/progress
+        #     port: api
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        #   successThreshold: 1
+        #   failureThreshold: 3
         volumeMounts:
           - name: mongosync
             readOnly: true

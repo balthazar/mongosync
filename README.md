@@ -11,7 +11,7 @@ kubectl apply -f ./deploy.yml
 Expose the port
 
 ```bash
-kubectl -n infra-mongosync port-forwards svc/mongosync 27182:27182
+kubectl port-forward svc/mongosync 27182:27182
 ```
 
 Verify the connection

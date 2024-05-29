@@ -4,10 +4,9 @@ metadata:
   name: mongosync
 type: Opaque
 stringData:
-  # Refer to https://www.mongodb.com/docs/cluster-to-cluster-sync/current/reference/configuration/#configuration for more options.
-  mongosync.yml: |
-    cluster0: "mongodb://mongosync-user:<strong-password>@mongos.mongodb.svc.cluster.local:27017"
-    cluster1: "mongodb://mongosync-user:<strong-password>@192.168.32.64:27017"
+  config.yml: |
+    cluster0: "mongodb://admin:password@cluster.namespace.svc"
+    cluster1: "mongodb://admin:password@new-cluster.namespace.svc"
     logPath: "/var/log/mongosync"
     verbosity: "WARN"
 ---
@@ -34,7 +33,7 @@ spec:
       containers:
       - image: balthazar0/mongosync
         name: mongosync
-        command: ["--config", "/etc/mongosync.conf"]
+        args: ["--config", "/etc/mongosync/config.yml"]
         ports:
         - containerPort: 27182
           name: api
@@ -54,21 +53,10 @@ spec:
           timeoutSeconds: 5
           successThreshold: 1
           failureThreshold: 3
-        env:
-        - name: MONGOSYNC_CLUSTER_0
-          valueFrom:
-            secretKeyRef:
-              name: mongosync
-              key: MONGOSYNC_CLUSTER_0
-        - name: MONGOSYNC_CLUSTER_1
-          valueFrom:
-            secretKeyRef:
-              name: mongosync
-              key: MONGOSYNC_CLUSTER_1
         volumeMounts:
           - name: mongosync
             readOnly: true
-            mountPath: "/etc/"
+            mountPath: "/etc/mongosync"
 ---
 apiVersion: v1
 kind: Service

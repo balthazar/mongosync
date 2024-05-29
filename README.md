@@ -1,5 +1,7 @@
 # mongosync
 
+This project intent is to provide an easy way to deploy and run mongosync, a tool to synchronize data between Mongo clusters, on Kubernetes.
+
 ### Deployment
 
 Update the `cluster0` and `cluster1` fields in the manifest and apply it to create the deployment.
